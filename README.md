@@ -31,6 +31,7 @@ Rank   System/CPU                (sec)
 AMD 7950f 8-core (fast)           252
 AMD 7950c 8-core (big cache)      273
 AMD 7950x3D 16-core               283
+Apple M2 Pro 12-core (8 big)      301
 Intel 12900k 16-core (8 big)      365
 ```
 
@@ -84,7 +85,7 @@ A handful of neuroimaging tools are dramatically accelerated by using a CUDA-com
 | Eddy          | 34            | 34            |
 | Probtrackx    | 175           | 178           |
 
-We did not find a dramatic performance difference between the $1500 RTX3090 with 24 Gb and the $329 RTX3060 with 12 Gb. There still may be benefits for graphics cards when considering machine learning inference.
+We did not find a dramatic performance difference between the $1500 RTX3090 with 24 Gb and the $329 RTX3060 with 12 Gb. There still may be benefits for graphics cards when considering [machine learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/) inference.
 
 
 ## Conclusions
@@ -95,6 +96,7 @@ We did not find a dramatic performance difference between the $1500 RTX3090 with
 
 ## Links
 
- - Anandtech [Ryzen 7950x3d review](https://www.anandtech.com/show/18747/the-amd-ryzen-9-7950x3d-review-amd-s-fastest-gaming-processor/4)
+ - Anandtech [Ryzen 7950x3d review](https://www.anandtech.com/show/18747/the-amd-ryzen-9-7950x3d-review-amd-s-fastest-gaming-processor/4).
  - Puget Systems [Ryzen 7950x3d for content creation](https://www.pugetsystems.com/labs/articles/amd-ryzen-9-7900x3d-and-7950x3d-content-creation-review/).
  - Phoronix [EPYC 9684X review](https://www.phoronix.com/review/amd-epyc-9684x-benchmarks)
+ - Tim Dettmers [provides insights for selecting a GPU for deep learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/).
