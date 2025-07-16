@@ -12,7 +12,8 @@ While some of the tests below evaluate the influence of multiple threads to acce
 
 Three computers were tested, with a ram disk used to minimize IO differences:
 
- - MacBook Pro 16 (2022) with [Apple M2 Pro](https://en.wikipedia.org/wiki/Apple_M2) 12 (8+4) core, L2 32mb, L3 24 mb, maximum bandwidth 200 GB/s, 3.5GHz, integrated GPU. 
+ - MacBook Pro 16 (2022) with [Apple M2 Pro](https://en.wikipedia.org/wiki/Apple_silicon) 12 (8+4) core, L2 32mb, maximum bandwidth 200 GB/s, 3.5GHz, integrated GPU. 
+ - MacBook Pro 14 (2024) with [Apple M4 Pro](https://en.wikipedia.org/wiki/Apple_silicon) 14 (10+4) core, L2 36mb, maximum bandwidth 273 GB/s, 4.5GHz, integrated GPU. 
  - AMD [Ryzen 7950x3d](https://en.wikipedia.org/wiki/List_of_AMD_Ryzen_processors#Raphael_(7000_series,_Zen_4_based)) 16 core, L2 16mb, L3 128 mb (8 fast cores share 32mb, 8 share 96mb), 64Gb DDR4 6000, Ubuntu 23.04, 4.2-5.5 Ghz. We refer to this chip as `7950x3d` when all 16 cores are enabled, `7950f` when only the fast 8 cores are enabled, and `7950c` when only the 8 cores with the extra 3D cache are enabled.
  -  Intel [I9 12900ks](https://en.wikipedia.org/wiki/List_of_Intel_Core_i9_processors#Alder_Lake_(Intel_7,_12th_generation)) 16 core (8 efficiency), L2 14mb, L3 30 mb , 64Gb DDR3 3200, Ubuntu 23.04, 3.4-5.5 Ghz. We refer to this chip as `7950x3d` when all 16 cores are enabled, `7950f` when only the fast 8 cores are enabled, and `7950c` when only the 8 cores with the extra 3D cache are enabled.
 
@@ -64,15 +65,17 @@ AMD 7950c 8-core (big cache)        879
 [POSIX Threads](https://en.wikipedia.org/wiki/POSIX_Threads) is a low-level method for handling parallel threads. Here we test [C-Ray](https://github.com/neurolabusc/c-ray) a simple raytracing benchmark by [John Tsiombikas](https://github.com/jtsiomb) that provides a measure of parallel floating point CPU performance. The small size means it can be [contained in cache](http://www.sgidepot.co.uk/c-ray.html), so it is not a great measure of typical performance with real world datasets. On the other hand, it is very portable and has been used for many years. This allows us to make historical comparisons. Specifically, here we provide data for [SGI Depot Test 3](http://www.sgidepot.co.uk/c-ray.html).
 
 ```
-Rank   System/CPU                  (msec)  Threads
-Ampere Altra A1 3.0GHz 160-core       413     200
-AMD 7950x3D 16-core                  1245     120
-Intel 12900k 16-core (8 big)         1548     120
-Apple M2 Pro 12-core (8 big) 3.7GHz  1640      64
-Apple M2 Pro 12-core (8 big) 3.7GHz 14014       1
-Intel 12900k 16-core (8 big)        16257       1
-AMD 7950x3D 16-core                 18691       1
-Ampere Altra A1 3.0GHz 160-core     34563       1
+Rank   System/CPU                   (msec)  Threads
+Ampere Altra A1 3.0GHz 160-core        413     200
+Apple M4 Pro 14-core (10 big) 4.5GHz  1011      64
+AMD 7950x3D 16-core                   1245     120
+Intel 12900k 16-core (8 big)          1548     120
+Apple M2 Pro 12-core (8 big) 3.7GHz   1640      64
+Apple M4 Pro 14-core (10 big) 4.5GHz 10264       1
+Apple M2 Pro 12-core (8 big) 3.7GHz  14014       1
+Intel 12900k 16-core (8 big)         16257       1
+AMD 7950x3D 16-core                  18691       1
+Ampere Altra A1 3.0GHz 160-core      34563       1
 ```
 
 ## CUDA graphics cards
