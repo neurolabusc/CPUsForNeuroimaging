@@ -112,10 +112,13 @@ The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform compet
 
 | System                      | topup | eddy | bedpostx | probtrackx | other |
 | --------------------------- | ----- | ---- | -------- | ---------- | ----- |
-| AMD 7995WX   RTX4090        | 103   | 198  | 225      | 47         | 27   |
+| AMD 7995WX   RTX4090        | 103   | 198  | 225      | 47         | 27    |
+| AMD Epyc 9454 H100          | 100   | 331  | 181      | 53         | 34    |
 | AMD 7950x3D  RTX4070        | 77    | 103  | 341      | 77         | 25    |
 | AMD 5975WX  RTX4070 Ti Super| 95    | 170  | 343      | 79         | 31    |
+| Intel-8480CL A100           | 154   | 442  | 201      | 73         | 48    |
 | Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    |
+| AMD Epyc 9355 H200          | 91    | 339  | 164      | error      | DNF   |
 
 ## End-to-end fMRI Pipeline
 
@@ -125,9 +128,11 @@ This repository includes a simple benchmark using an end-to-end fMRI processing 
 Rank   System/CPU                  (sec)
 Apple M4 Pro 14-core (10 big)       251
 AMD 7995WX 96-core                  305
+AMD Epyc 9355 H200                  340
 AMD 7950x3D 16-core                 442
+AMD Epyc 9454 H100                  449
 AMD 5975WX 32-core                  602
-
+Intel-8480CL A100                   618
 ```
 
 ## Artificial Intelligence
@@ -136,11 +141,16 @@ Artificial Intelligence (AI) models are revolutionizing neuroimaging. While NVid
 
 ```
 Rank   System/CPU                  (sec)
+AMD Epyc 9355 H200                   23
 AMD 7995WX 4090                      25
 AMD 7950x3D 4070 Ti                  27
 AMD 5975WX 4070 Ti Super             33
+AMD Epyc 9454 H100                   34
 Apple M4 Pro 14-core (10 big)        43
+Intel-8480CL A100                    43
 ```
+
+
 
 ## Conclusions
 
