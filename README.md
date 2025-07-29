@@ -115,6 +115,8 @@ The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform compet
 | AMD 7995WX   RTX4090        | 103   | 198  | 225      | 47         | 27    |
 | AMD Epyc 9454 H100          | 100   | 331  | 181      | 53         | 34    |
 | AMD 7950x3D  RTX4070        | 77    | 103  | 341      | 77         | 25    |
+| AMD 7950f  RTX4070          | 83    | 101  | 341      | 79         | 23    |
+| AMD 7950c  RTX4070          | 92    | 108  | 345      | 78         | 25    |
 | AMD 5975WX  RTX4070 Ti Super| 95    | 170  | 343      | 79         | 31    |
 | Intel-8480CL A100           | 154   | 442  | 201      | 73         | 48    |
 | Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    |
@@ -149,8 +151,6 @@ AMD Epyc 9454 H100                   34
 Apple M4 Pro 14-core (10 big)        43
 Intel-8480CL A100                    43
 ```
-
-
 
 ## Conclusions
 
