@@ -15,7 +15,7 @@ Several computers were tested:
  - MacBook Pro 16 (2022) with [Apple M2 Pro](https://en.wikipedia.org/wiki/Apple_silicon) 12 (8+4) core, L2 32mb, maximum bandwidth 200 GB/s, 3.5GHz, integrated GPU.
  - MacBook Pro 14 (2024) with [Apple M4 Pro](https://en.wikipedia.org/wiki/Apple_silicon) 14 (10+4) core, L2 36mb, maximum bandwidth 273 GB/s, 4.5GHz, integrated GPU.
  - AMD [Ryzen 7950x3d](https://en.wikipedia.org/wiki/List_of_AMD_Ryzen_processors#Raphael_(7000_series,_Zen_4_based)) 16 core, L2 16mb, L3 128 mb (8 fast cores share 32mb, 8 share 96mb), 64Gb DDR4 6000, Ubuntu 23.04, 4.2-5.5 Ghz, 83.2 GB/s with a 12 Gb NVidia RTX 4070 Ti. We refer to this chip as `7950x3d` when all 16 cores are enabled, `7950f` when only the fast 8 cores are enabled, and `7950c` when only the 8 cores with the extra 3D cache are enabled.
- -  AMD [799WX](https://en.wikipedia.org/wiki/Threadripper#Storm_Peak_(Threadripper_7000_series,_Zen_4_based)) 96 core, L2 96mb, L3 384mb, 2.5-5.1 Ghz, 332.8 GB/s.
+ -  AMD [7995WX](https://en.wikipedia.org/wiki/Threadripper#Storm_Peak_(Threadripper_7000_series,_Zen_4_based)) 96 core, L2 96mb, L3 384mb, 2.5-5.1 Ghz, 332.8 GB/s with a 24 Gb NVidia RTX 4090.
  -  Intel [I9 12900ks](https://en.wikipedia.org/wiki/List_of_Intel_Core_i9_processors#Alder_Lake_(Intel_7,_12th_generation)) 16 core (8 efficiency), L2 14mb, L3 30 mb , 64Gb DDR3 3200, Ubuntu 23.04, 3.4-5.5 Ghz, 51.2 GB/s.
 
 ## AFNI Parallel Processing
@@ -85,7 +85,7 @@ Ampere Altra A1 3.0GHz 160-core      34563       1
 
 ## CUDA graphics cards
 
-A handful of neuroimaging tools are dramatically accelerated by using a CUDA-compatible graphics card (GPU) rather than the central processing unit (CPU). This includes the FSL tools [Bedpostx](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061892), [Eddy](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide) and [Probtrackx](https://www.sciencedirect.com/science/article/pii/S1053811918321591). However, in our experience these tools perform similarly with consumer-grade GPUs and much more expensive professional grade GPUs (which provide features like high-bandwidth memory and faster double precision floating point computations). Indeed, while these GPU-based tools are dramatically faster than their CPU-based counterparts, looking at tools like nvidia-smi suggests that these GPU tools are often limited by the data transfer to the CPU. This suggests that their may be rapidly diminishing returns when selecting a graphics card for neuroimage. Here we evaluate the speed for processing our [gpu_test](https://github.com/neurolabusc/gpu_test). These tests were designed simply to ensure the graphics cards were working, so are faster that real world applications, but they are similar in the processing. We tested two graphics cards on a single computer (the i9 12900k) which used the integrated graphics for the display (so the GPU was dedicated for processing).
+A handful of neuroimaging tools are dramatically accelerated by using a CUDA-compatible graphics card (GPU) rather than the central processing unit (CPU). This includes the FSL tools [Bedpostx](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061892), [Eddy](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide) and [Probtrackx](https://www.sciencedirect.com/science/article/pii/S1053811918321591). However, our experience suggests that these tools deliver similar performance on affordable consumer GPUs and far more expensive professional cards. One likely explanation is that these tools are [explicitly designed to minimize memory demands](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1510&L=FSL&D=0&P=149796) and maintain frequent interaction with the CPU.  This results in diminishing returns from premium hardware. These observations are specific to the design of these specific FSL tools and should not be generalized to all [machine learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/) applications. To demonstrate the specific behavior of the FSL tools, we evaluated performance using our [gpu_test](https://github.com/neurolabusc/gpu_test) benchmark on two NVIDIA GPUs installed in the same workstation (i9-12900K, with integrated graphics handling display to reserve the discrete GPU for processing).
 
 | Test          | RTX3060 (sec) | RTX3090 (sec) |
 | ------------- | ------------- | ------------- |
@@ -93,31 +93,9 @@ A handful of neuroimaging tools are dramatically accelerated by using a CUDA-com
 | Eddy          | 34            | 34            |
 | Probtrackx    | 175           | 178           |
 
-However, the lack of strong differences in FSL performance likely reflects the fact that tools like eddy are explicitly designed to have a [minimal memory footprint](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1510&L=FSL&D=0&P=149796) and therefore frequently interact with the CPU. Presumably, this limits the potential advantages of more expensive GPUs with higher memory capacity. Therefore, these FSL-specific conclusions do not apply when considering [machine learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/) inference.
-
-## End-to-end fMRI Pipeline
-
-This repository includes a simple benchmark using an end-to-end fMRI processing pipeline with FSL. The pipeline performs all steps required for a single-subject analysis, including registration, motion correction, statistical modeling, and temporal filtering.
-
-The dataset includes 302 fMRI volumes and uses a fieldmap for spatial undistortion, guided by a T1-weighted anatomical scan. The task involves left and right finger tapping, and the statistical analysis identifies three contrasts:
-
- - Greater activation for left > right finger taps
- - Greater activation for right > left finger taps
- - Greater activation for any movement > rest
-
-The original dataset is described [here](https://people.cas.sc.edu/rorden/tutorial/html/event.html), though that tutorial uses older versions of FSL and does not incorporate the fieldmap.
-
-Here are results for two computers:
-
-```
-Rank   System/CPU                  (sec)
-Apple M4 Pro 14-core (10 big)       251
-AMD 7950x3D 16-core                 442
-```
-
 ## End-to-end DWI Pipeline
 
-As noted earlier, several popular Diffusion-Weighted Imaging (DWI) tools in FSL can be dramatically accelerated using NVIDIA's proprietary CUDA framework. The previous benchmark focused on a minimalistic test case, which may not reflect the demands of real-world neuroimaging workflows.
+As noted in the previous test, several popular Diffusion-Weighted Imaging (DWI) tools in FSL can be dramatically accelerated using NVIDIA's proprietary CUDA framework. That benchmark focused on a minimalistic test case, which may not reflect the demands of real-world neuroimaging workflows.
 
 This benchmark uses a more representative dataset from the [Aphasia Recovery Cohort](https://pubmed.ncbi.nlm.nih.gov/39251640/). It includes:
 
@@ -132,18 +110,39 @@ The pipeline performs the following steps:
 
 The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform competitively for general CPU-bound tasks. However, Apple hardware does not support CUDA. On CUDA-enabled systems, GPU acceleration leads to massive speedups, especially for tractography and model fitting.
 
-| System        | topup | eddy | bedpostx | probtrackx | other |
-| ------------- | ----- | ---- | -------- | ---------- | ----- |
-| AMD 7950x3D   | 77    | 103  | 341      | 77         | 25    |
-| Apple M4 Pro  | 93    | 4148 | 1613     | 7357       | 17    |
+| System                      | topup | eddy | bedpostx | probtrackx | other |
+| --------------------------- | ----- | ---- | -------- | ---------- | ----- |
+| AMD 7995WX   RTX4090        | 104   | 207  | 228      | 48         | 27   |
+| AMD 7950x3D  RTX4070        | 77    | 103  | 341      | 77         | 25    |
+| AMD 5975WX  RTX4070 Ti Super| 95    | 170  | 343      | 79         | 31    |
+| Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    |
 
-## Artificial Intelligence
+95 b 343 E170  p79 
+718 - (95 + 343 + 170 + 79)
+ 614 - (104 207  228 48)
 
-Artificial Intelligence (AI) models are revolutionizing neuroimaging. While NVidia graphics card hardware is the dominant player in generating AI models, many popular tools in our field like brainchop and some FreeSurfer AI models are able to work on graphics cards from other vendors, such as Apple. This benchmark brain extracts images from the the [Aphasia Recovery Cohort](https://pubmed.ncbi.nlm.nih.gov/39251640/) and the [Stroke Outcome Optimization Project](https://pubmed.ncbi.nlm.nih.gov/39095364/) using the [MindGrab](https://arxiv.org/abs/2506.11860).
+## End-to-end fMRI Pipeline
+
+This repository includes a simple benchmark using an end-to-end fMRI processing pipeline with FSL. The pipeline performs all steps required for a single-subject analysis, including spatial undistortion, registration, motion correction, statistical modeling, and temporal filtering. The [dataset](https://people.cas.sc.edu/rorden/tutorial/html/event.html) includes 302 fMRI volumes and uses a fieldmap for spatial undistortion, guided by a T1-weighted anatomical scan. The task involves left and right finger tapping.
 
 ```
 Rank   System/CPU                  (sec)
-AMD 7950x3D 16-core 4070 Ti          27
+Apple M4 Pro 14-core (10 big)       251
+AMD 7995WX 96-core                  305
+AMD 7950x3D 16-core                 442
+AMD 5975WX 32-core                  602
+
+```
+
+## Artificial Intelligence
+
+Artificial Intelligence (AI) models are revolutionizing neuroimaging. While NVidia graphics card hardware is the dominant player in generating AI models, many popular tools in our field like brainchop and some FreeSurfer AI models are able to work on graphics cards from other vendors, such as Apple. This benchmark brain extracts images from the the [Aphasia Recovery Cohort](https://pubmed.ncbi.nlm.nih.gov/39251640/) and the [Stroke Outcome Optimization Project](https://pubmed.ncbi.nlm.nih.gov/39095364/) using the [MindGrab](https://arxiv.org/abs/2506.11860) model.
+
+```
+Rank   System/CPU                  (sec)
+AMD 7995WX 4090                      25
+AMD 7950x3D 4070 Ti                  27
+AMD 5975WX 4070 Ti Super             33
 Apple M4 Pro 14-core (10 big)        43
 ```
 
@@ -152,18 +151,19 @@ Apple M4 Pro 14-core (10 big)        43
  - In aggregate, AMD's 3D cache does not appear to benefit the tools used in neuroimaging, so the EPYC 9374F is likely to out perform the more expensive 9384X.
  - No CPU evaluated dominated the results, and each appears competitive. In this test, single threaded tasks were done an otherwise dormant system (allowing unrestricted boost of a single thread), while typical servers will be running many concrurrent tasks.
  - Empirically, Apple M2/M4 have excellent single-threaded performance. This likely reflects its prodigious bandwidth (among other benefits). Clearly, MacBooks provide a great platform for developing pipelines to be deployed for large datasets on the cloud and servers. Unfortunately, some neuroimaging tools rely on NVidia's CUDA that is not available on MacOS. It will be interesting to see how [NVidia ARM-based CPUs with CUDA GPUs](https://www.nvidia.com/en-us/data-center/grace-hopper-superchip/) compete in this domain.
- - In general, many neuroimaging processing tools do not fully exploit modern multi-core CPUs. These tools are often single-threaded or show rapidly diminishing returns beyond a small number of cores. As a result, the benefit of a server with many CPU cores is not in accelerating the processing of a single subject, but rather in enabling parallel processing of multiple subjects simultaneously. This makes high-core-count systems ideal for batch processing datasets with images from many individuals.
-
+ - In general, many neuroimaging processing tools do not exploit modern multi-core CPUs. These tools are often single-threaded or show rapidly diminishing returns beyond a small number of cores. As a result, the benefit of a server with many CPU cores is not in accelerating the processing of a single subject, but rather in enabling parallel processing of multiple subjects simultaneously. This makes high-core-count systems ideal for batch processing datasets with images from many individuals.
 
 ## Contributing
 
-This web page was originally created in 2023 to inform my centers workstation and supercomputer purchases. While the findings remain relevant, much of the hardware described is no longer the latest generation. To keep the benchmarks current, data and scripts for the final three tests are provided, allowing users to evaluate their own systems. If you would like to contribute, feel free to submit a pull request or open an issue to share your results.
+This web page was originally created in 2023 to inform my center's workstation and supercomputer purchases. While the findings remain relevant, much of the hardware described is no longer the latest generation. To keep the benchmarks current, data and scripts for the final three tests are provided, allowing users to evaluate their own systems. If you would like to contribute, feel free to submit a pull request or open an issue to share your results.
 
-To replicate this benchmark (assuming both fsl and [brainchop](https://github.com/neuroneural/brainchop-cli) are installed), run:
+To run the benchmarks, you will need FSL and [brainchop](https://github.com/neuroneural/brainchop-cli) installed. On Linux systems with an NVIDIA GPU, ensure that both clang and nvcc are installed (`sudo apt install nvidia-cuda-toolkit clang`) Without nvcc, brainchop will fall back to CPU processing instead of using the GPU.
+
+Once the requirements are met, run the following:
 
 ```bash
 git clone https://github.com/neurolabusc/CPUsForNeuroimaging
-cd ./CPUsForNeuroimaging/benchmark
+cd ./CPUsForNeuroimaging/bench
 python dwi.py
 python fmri.py
 python ai.py
