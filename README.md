@@ -112,14 +112,10 @@ The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform compet
 
 | System                      | topup | eddy | bedpostx | probtrackx | other |
 | --------------------------- | ----- | ---- | -------- | ---------- | ----- |
-| AMD 7995WX   RTX4090        | 104   | 207  | 228      | 48         | 27   |
+| AMD 7995WX   RTX4090        | 103   | 198  | 225      | 47         | 27   |
 | AMD 7950x3D  RTX4070        | 77    | 103  | 341      | 77         | 25    |
 | AMD 5975WX  RTX4070 Ti Super| 95    | 170  | 343      | 79         | 31    |
 | Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    |
-
-95 b 343 E170  p79 
-718 - (95 + 343 + 170 + 79)
- 614 - (104 207  228 48)
 
 ## End-to-end fMRI Pipeline
 
