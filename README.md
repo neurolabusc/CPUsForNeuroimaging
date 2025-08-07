@@ -108,7 +108,7 @@ The pipeline performs the following steps:
  - Fiber orientation modeling using [bedpostx](https://pubmed.ncbi.nlm.nih.gov/23658616/)
  - Probabilistic tractography with [probtrackx](https://pubmed.ncbi.nlm.nih.gov/30537563/) to model connections between regions defined by the Harvard-Oxford atlas
 
-The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform competitively for general CPU-bound tasks. However, Apple hardware does not support CUDA. On CUDA-enabled systems, GPU acceleration leads to massive speedups, especially for tractography and model fitting.
+The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform competitively for general CPU-bound tasks. However, Apple hardware does not support CUDA. On CUDA-enabled systems, GPU acceleration leads to massive speedups, especially for tractography and model fitting. In practice, the server‑class systems tested (Epyc, 8480CL) were slower than commodity desktop computers for some stages (e.g., eddy), likely because the servers had turbo boost disabled (maintaining a fixed clock speed regardless of active threads) and used error‑correcting memory. Note that graphics cards with a huge amount of RAM like the H200 require a [kludge](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2508&L=FSL&O=D&X=2FC8C7B21A46841319&Y=rorden%40sc.edu&P=47) to run probtrackx.
 
 | System                      | topup | eddy | bedpostx | probtrackx | other |
 | --------------------------- | ----- | ---- | -------- | ---------- | ----- |
@@ -120,6 +120,7 @@ The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform compet
 | AMD 5975WX  RTX4070 Ti Super| 95    | 170  | 343      | 79         | 31    |
 | Intel-8480CL A100           | 154   | 442  | 201      | 73         | 48    |
 | Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    |
+| AMD 3900X RTX 3080 Ti       | 130   | 163  | 401      | 120        | 43    |
 | AMD Epyc 9355 H200          | 91    | 339  | 164      | error      | DNF   |
 
 ## End-to-end fMRI Pipeline
@@ -135,6 +136,7 @@ AMD 7950x3D 16-core                 442
 AMD Epyc 9454 H100                  449
 AMD 5975WX 32-core                  602
 Intel-8480CL A100                   618
+AMD 3900X                           714
 ```
 
 ## Artificial Intelligence
