@@ -83,19 +83,9 @@ AMD 7950x3D 16-core                  18691       1
 Ampere Altra A1 3.0GHz 160-core      34563       1
 ```
 
-## CUDA graphics cards
-
-A handful of neuroimaging tools are dramatically accelerated by using a CUDA-compatible graphics card (GPU) rather than the central processing unit (CPU). This includes the FSL tools [Bedpostx](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061892), [Eddy](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide) and [Probtrackx](https://www.sciencedirect.com/science/article/pii/S1053811918321591). However, our experience suggests that these tools deliver similar performance on affordable consumer GPUs and far more expensive professional cards. One likely explanation is that these tools are [explicitly designed to minimize memory demands](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1510&L=FSL&D=0&P=149796) and maintain frequent interaction with the CPU.  This results in diminishing returns from premium hardware. These observations are specific to the design of these specific FSL tools and should not be generalized to all [machine learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/) applications. To demonstrate the specific behavior of the FSL tools, we evaluated performance using our [gpu_test](https://github.com/neurolabusc/gpu_test) benchmark on two NVIDIA GPUs installed in the same workstation (i9-12900K, with integrated graphics handling display to reserve the discrete GPU for processing).
-
-| Test          | RTX3060 (sec) | RTX3090 (sec) |
-| ------------- | ------------- | ------------- |
-| Bedpostx      | 75            | 69            |
-| Eddy          | 34            | 34            |
-| Probtrackx    | 175           | 178           |
-
 ## End-to-end DWI Pipeline
 
-As noted in the previous test, several popular Diffusion-Weighted Imaging (DWI) tools in FSL can be dramatically accelerated using NVIDIA's proprietary CUDA framework. That benchmark focused on a minimalistic test case, which may not reflect the demands of real-world neuroimaging workflows.
+A handful of neuroimaging tools are dramatically accelerated by using a CUDA-compatible graphics card (GPU) rather than the central processing unit (CPU). This includes the FSL tools [Bedpostx](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061892), [Eddy](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide) and [Probtrackx](https://www.sciencedirect.com/science/article/pii/S1053811918321591). However, these tools are [explicitly designed to minimize memory demands](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1510&L=FSL&D=0&P=149796) and maintain frequent interaction with the CPU. This results in diminishing returns from premium hardware. These observations are specific to the design of these specific FSL tools and should not be generalized to all [machine learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/) applications. To demonstrate the specific behavior of the FSL tools, we run a real-world neuroimaging diffusion weighted imaging workflow.
 
 This benchmark uses a more representative dataset from the [Aphasia Recovery Cohort](https://pubmed.ncbi.nlm.nih.gov/39251640/). It includes:
 
@@ -110,18 +100,19 @@ The pipeline performs the following steps:
 
 The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform competitively for general CPU-bound tasks. However, Apple hardware does not support CUDA. On CUDA-enabled systems, GPU acceleration leads to massive speedups, especially for tractography and model fitting. In practice, the server‑class systems tested (Epyc, 8480CL) were slower than commodity desktop computers for some stages (e.g., eddy), likely because the servers had turbo boost disabled (maintaining a fixed clock speed regardless of active threads) and used error‑correcting memory. Note that graphics cards with a huge amount of RAM like the H200 require a [kludge](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind2508&L=FSL&O=D&X=2FC8C7B21A46841319&Y=rorden%40sc.edu&P=47) to run probtrackx.
 
-| System                      | topup | eddy | bedpostx | probtrackx | other |
-| --------------------------- | ----- | ---- | -------- | ---------- | ----- |
-| AMD 7995WX   RTX4090        | 103   | 198  | 225      | 47         | 27    |
-| AMD Epyc 9454 H100          | 100   | 331  | 181      | 53         | 34    |
-| AMD 7950x3D  RTX4070        | 77    | 103  | 341      | 77         | 25    |
-| AMD 7950f  RTX4070          | 83    | 101  | 341      | 79         | 23    |
-| AMD 7950c  RTX4070          | 92    | 108  | 345      | 78         | 25    |
-| AMD 5975WX  RTX4070 Ti Super| 95    | 170  | 343      | 79         | 31    |
-| Intel-8480CL A100           | 154   | 442  | 201      | 73         | 48    |
-| Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    |
-| AMD 3900X RTX 3080 Ti       | 130   | 163  | 401      | 120        | 43    |
-| AMD Epyc 9355 H200          | 91    | 339  | 164      | error      | DNF   |
+| System                      | topup | eddy | bedpostx | probtrackx | other | total |
+| --------------------------- | ----- | ---- | -------- | ---------- | ----- | ----- |
+| AMD 7995WX RTX4090          | 103   | 198  | 225      | 47         | 27    | 600   |
+| AMD 7950x3D RTX4070         | 77    | 103  | 341      | 77         | 25    | 623   |
+| AMD 7950f RTX4070           | 83    | 101  | 341      | 79         | 23    | 627   |
+| AMD 7950c RTX4070           | 92    | 108  | 345      | 78         | 25    | 648   |
+| AMD Epyc 9454 H100          | 100   | 331  | 181      | 53         | 34    | 699   |
+| AMD 5975WX RTX4070 Ti Super | 95    | 170  | 343      | 79         | 31    | 718   |
+| AMD 3900X RTX 3080 Ti       | 130   | 163  | 401      | 120        | 43    | 857   |
+| Intel-8480CL A100           | 154   | 442  | 201      | 73         | 48    | 918   |
+| AMD 7965WX RTX 4000 Ada     | 91    | 241  | 453      | 82         | 28    | 1107  |
+| Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    | 13228 |
+| AMD Epyc 9355 H200          | 91    | 339  | 164      | error      | DNF   | DNF   |
 
 ## End-to-end fMRI Pipeline
 
@@ -132,6 +123,7 @@ Rank   System/CPU                  (sec)
 Apple M4 Pro 14-core (10 big)       251
 AMD 7995WX 96-core                  305
 AMD Epyc 9355 H200                  340
+AMD 7965WX RTX 4000 Ada             395
 AMD 7950x3D 16-core                 442
 AMD Epyc 9454 H100                  449
 AMD 5975WX 32-core                  602
@@ -150,6 +142,7 @@ AMD 7995WX 4090                      25
 AMD 7950x3D 4070 Ti                  27
 AMD 5975WX 4070 Ti Super             33
 AMD Epyc 9454 H100                   34
+AMD 7965WX RTX 4000 Ada              36
 Apple M4 Pro 14-core (10 big)        43
 Intel-8480CL A100                    43
 ```
