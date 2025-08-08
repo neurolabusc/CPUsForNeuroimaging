@@ -8,8 +8,10 @@ import json
 import time
 
 def report_elapsed_time(start_time, comment=""):
-    elapsed = time.time() - start_time
-    print(f"{comment} completed in {int(elapsed)} seconds.")
+    elapsed = int(time.time() - start_time)
+    if comment:
+        print(f"{comment} completed in {elapsed} seconds.")
+    return elapsed
 
 def get_max_value(nifti_path):
     result = subprocess.run(
@@ -92,7 +94,7 @@ def run_probtrackx(temp_dir):
     print(f"Using {'GPU' if 'gpu' in cmd else 'CPU'} version: {cmd}")
     start_time = time.time()
     run(f"{cmd} --network -x {seedlist}  -l --onewaycondition -c 0.2 -S 2000 --steplength=0.5 -P 5000 --fibthresh=0.01 --distthresh=0.0 --sampvox=0.0 --forcedir --opd -s {merged} -m {mask}  --dir={outdir}")
-    report_elapsed_time(start_time, "probtrackx2")
+    return report_elapsed_time(start_time, "probtrackx2")
 
 
 def clear_temp_folder(temp_dir):
@@ -162,7 +164,7 @@ def run_dtifit(fsl_dir, temp_dir):
     monitor_dir = bed_dir + ".bedpostX"
     if os.path.exists(monitor_dir):
         print(f"{monitor_dir} already exists. Skipping BEDPOSTX")
-        return
+        return -1
     print("Preparing BEDPOSTX input...")
     data_path = os.path.join(bed_dir, "data.nii.gz")
     mask_path = os.path.join(bed_dir, "nodif_brain_mask.nii.gz")
@@ -186,7 +188,7 @@ def run_dtifit(fsl_dir, temp_dir):
     xfms_eye = os.path.join(monitor_dir, "xfms", "eye.mat")
     while not os.path.isfile(xfms_eye):
         time.sleep(10)  # Check every 10 seconds
-    report_elapsed_time(start_time, "bedpostx")
+    return report_elapsed_time(start_time, "bedpostx")
 
 
 
@@ -241,7 +243,7 @@ def run_topup(temp_dir, dwi, dwi_pa):
     n_threads = max(os.cpu_count() - 1, 1)
     start_time = time.time()
     run(f"topup --imain={ap_pa_path} --datain={acq_param_path} --nthr={n_threads} --config=b02b0_1.cnf --out={topup_out}")
-    report_elapsed_time(start_time, "topup")
+    ttime = report_elapsed_time(start_time, "topup")
     vol1in_path = os.path.join(temp_dir, "b0")
     run(f"fslroi {dwi} {vol1in_path} 0 1")
     vol1_path = os.path.join(temp_dir, "b0_Cor")
@@ -283,7 +285,8 @@ def run_topup(temp_dir, dwi, dwi_pa):
       n_threads = 1
     start_time = time.time()
     run(f"eddy diffusion --imain={dwi_merge_path} --mask={mask_path} --nthr={n_threads} --index={index_path} --acqp={acq_param_path} --bvecs={bvec_merge_path} --bvals={bval_merge_path} --slm=linear --repol --fwhm=0 --topup={topup_out} --flm=quadratic --out={ap_eddy_path} --data_is_shelled")
-    report_elapsed_time(start_time, "eddy")
+    etime = report_elapsed_time(start_time, "eddy")
+    return ttime, etime
 
 def main():
     fsl_dir = os.environ.get("FSLDIR")
@@ -299,11 +302,21 @@ def main():
     os.makedirs(temp_dir, exist_ok=True)
     start_time = time.time()
     clear_temp_folder(temp_dir)
-    run_topup(temp_dir, dwi, dwi_pa)
-    run_dtifit(fsl_dir, temp_dir)
+    ttime, etime = run_topup(temp_dir, dwi, dwi_pa)
+    btime = run_dtifit(fsl_dir, temp_dir)
     run_flirt(fsl_dir, temp_dir)
-    run_probtrackx(temp_dir)
-    report_elapsed_time(start_time, "end-to-end")
+    ptime = run_probtrackx(temp_dir)
+    ver_path = os.path.join(fsl_dir, "etc", "fslversion")
+    if os.path.exists(ver_path):
+        ver = open(ver_path).read().strip()
+        print(f"FSL version: {ver}" + ("" if ver == "6.0.7.18" else "  [WARNING: expected 6.0.7.18]"))
+    sumtime = report_elapsed_time(start_time)
+    otime = sumtime - (ttime + etime + btime + ptime)
+    # Markdown table
+    print("| topup   | eddy    | bedpostx | probtrackx | other   | total     |")
+    print("| ------- | ------- | -------- | ---------- | ------- | --------- |")
+    print(f"| {ttime} | {etime} | {btime}  | {ptime}    | {otime} | {sumtime} |")
+
     
 if __name__ == '__main__':
     main()

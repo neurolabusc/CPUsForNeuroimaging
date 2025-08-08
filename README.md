@@ -103,16 +103,14 @@ The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform compet
 | System                      | topup | eddy | bedpostx | probtrackx | other | total |
 | --------------------------- | ----- | ---- | -------- | ---------- | ----- | ----- |
 | AMD 7995WX RTX4090          | 103   | 198  | 225      | 47         | 27    | 600   |
-| AMD 7950x3D RTX4070         | 77    | 103  | 341      | 77         | 25    | 623   |
-| AMD 7950f RTX4070           | 83    | 101  | 341      | 79         | 23    | 627   |
-| AMD 7950c RTX4070           | 92    | 108  | 345      | 78         | 25    | 648   |
 | AMD Epyc 9454 H100          | 100   | 331  | 181      | 53         | 34    | 699   |
 | AMD 5975WX RTX4070 Ti Super | 95    | 170  | 343      | 79         | 31    | 718   |
+| AMD 7950x3D RTX4070         | 84    | 203  | 339      | 77         | 24    | 727   |
 | AMD 3900X RTX 3080 Ti       | 130   | 163  | 401      | 120        | 43    | 857   |
+| AMD 7965WX RTX 4000 Ada     | 91    | 241  | 453      | 82         | 28    | 895   |
 | Intel-8480CL A100           | 154   | 442  | 201      | 73         | 48    | 918   |
-| AMD 7965WX RTX 4000 Ada     | 91    | 241  | 453      | 82         | 28    | 1107  |
 | Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    | 13228 |
-| AMD Epyc 9355 H200          | 91    | 339  | 164      | error      | DNF   | DNF   |
+| AMD Epyc 9355 H200          | 91    | 339  | 164      | 49         | DNF   | DNF   |
 
 ## End-to-end fMRI Pipeline
 
@@ -123,8 +121,8 @@ Rank   System/CPU                  (sec)
 Apple M4 Pro 14-core (10 big)       251
 AMD 7995WX 96-core                  305
 AMD Epyc 9355 H200                  340
+AMD 7950x3D 16-core                 371
 AMD 7965WX RTX 4000 Ada             395
-AMD 7950x3D 16-core                 442
 AMD Epyc 9454 H100                  449
 AMD 5975WX 32-core                  602
 Intel-8480CL A100                   618
