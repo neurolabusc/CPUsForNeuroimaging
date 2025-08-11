@@ -105,11 +105,11 @@ The results are shown below. Apple Silicon CPUs (like the M4 Pro) perform compet
 | AMD Epyc 9355 H200          | 91    | 253  | 149      | 48         | 26    | 567   |
 | AMD Epyc 9454 H100          | 100   | 245  | 163      | 51         | 39    | 598   |
 | AMD 7995WX RTX4090          | 103   | 198  | 225      | 47         | 27    | 600   |
-| AMD 5975WX RTX4070 Ti Super | 95    | 170  | 343      | 79         | 31    | 718   |
 | AMD 7950x3D RTX4070         | 84    | 203  | 339      | 77         | 24    | 727   |
-| AMD 3900X RTX 3080 Ti       | 130   | 163  | 401      | 120        | 43    | 857   |
+| AMD 5975WX RTX4070 Ti Super | 108   | 228  | 339      | 69         | 31    | 775   |
 | AMD 7965WX RTX 4000 Ada     | 91    | 241  | 453      | 82         | 28    | 895   |
 | Intel-8480CL A100           | 154   | 442  | 201      | 73         | 48    | 918   |
+| AMD 3900X RTX 3080 Ti       | 145   | 337  | 408      | 114        | 44    | 1048  |
 | Apple M4 Pro                | 93    | 4148 | 1613     | 7357       | 17    | 13228 |
 
 ## End-to-end fMRI Pipeline
