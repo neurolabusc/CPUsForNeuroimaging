@@ -71,10 +71,12 @@ AMD 7950c 8-core (big cache)        879
 Rank   System/CPU                   (msec)  Threads
 AMD 7995WX 96-core                     311     200
 Ampere Altra A1 3.0GHz 160-core        413     200
+NVidia DGX Spark 20-core (10 big)      757       1
 Apple M4 Pro 14-core (10 big) 4.5GHz  1011      64
 AMD 7950x3D 16-core                   1245     120
 Intel 12900k 16-core (8 big)          1548     120
 Apple M2 Pro 12-core (8 big) 3.7GHz   1640      64
+NVidia DGX Spark 20-core (10 big)     9375       1
 Apple M4 Pro 14-core (10 big) 4.5GHz 10264       1
 Apple M2 Pro 12-core (8 big) 3.7GHz  14014       1
 Intel 12900k 16-core (8 big)         16257       1
@@ -84,6 +86,8 @@ Ampere Altra A1 3.0GHz 160-core      34563       1
 ```
 
 ## End-to-end DWI Pipeline
+
+** Plese see [DiffusionBench](https://github.com/neurolabusc/DiffusionBench) for a more modern pipeline and benchmarks **
 
 A handful of neuroimaging tools are dramatically accelerated by using a CUDA-compatible graphics card (GPU) rather than the central processing unit (CPU). This includes the FSL tools [Bedpostx](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061892), [Eddy](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide) and [Probtrackx](https://www.sciencedirect.com/science/article/pii/S1053811918321591). However, these tools are [explicitly designed to minimize memory demands](https://www.jiscmail.ac.uk/cgi-bin/wa-jisc.exe?A2=ind1510&L=FSL&D=0&P=149796) and maintain frequent interaction with the CPU. This results in diminishing returns from premium hardware. These observations are specific to the design of these specific FSL tools and should not be generalized to all [machine learning](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/) applications. To demonstrate the specific behavior of the FSL tools, we run a real-world neuroimaging diffusion weighted imaging workflow.
 
@@ -119,6 +123,7 @@ This repository includes a simple benchmark using an end-to-end fMRI processing 
 ```
 Rank   System/CPU                  (sec)
 Apple M4 Pro 14-core (10 big)       251
+NVidia DGX Spark                    298
 AMD 7995WX 96-core                  305
 AMD Epyc 9355 H200                  340
 AMD 7950x3D 16-core                 371
